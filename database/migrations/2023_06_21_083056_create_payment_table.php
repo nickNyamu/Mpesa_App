@@ -19,13 +19,13 @@ return new class extends Migration
             $table->string('TransactionType')->nullable();
             $table->string('TransID')->nullable();
             $table->string('TransTime')->nullable();
-            $table->string('BusiessShortCode')->nullable();
+            $table->string('BusinessShortCode')->nullable();
             $table->string('BillRefNumber')->nullable();
             $table->string('InvoiceNumber')->nullable();
             $table->string('ThirdPartyTransID')->nullable();
             $table->string('MSISDN')->nullable();
-            $table->string('TransAmount', 8, 2)->nullable();
-            $table->string('OrgAccountBalance', 8, 2)->nullable();
+            $table->string('TransAmount', 12, 2)->nullable();
+            $table->string('OrgAccountBalance', 12, 2)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

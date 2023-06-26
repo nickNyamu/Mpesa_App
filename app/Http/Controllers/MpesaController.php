@@ -39,7 +39,7 @@ class MpesaController extends Controller
 
     public function mpesaValidation(Request $request)
     {
-        Log::info('Validation Endpoin Hit!');
+        Log::info('Validation Endpoint Hit!');
         Log::info($request->all());
         $resultCode = "0";
         $resultDesc = "Accepted validation request.";
@@ -66,8 +66,9 @@ class MpesaController extends Controller
 
     public function mpesaConfirmation(Request $request)
     {
+        Log::info('Confirmation Endpoint Hit!');
+        Log::info($request->all());
         $content=json_decode($request->getContent());
-        Log::info($content);
         $mpesa_transaction = new Payment();
         $mpesa_transaction->TransactionType = $content->TransactionType;
         $mpesa_transaction->TransID = $content->TransID;
@@ -101,11 +102,11 @@ class MpesaController extends Controller
     {
         $url = 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/simulate';
         $data = array(
-            'ShortCode' => env('MPESA_SHORTCODE'),
-            'CommandID' => 'CustomerPayBillOnline',
-            'Amount' => 30,
-            'Msisdn' => env('MPESA_TEST_MSISDN'),
-            'BillRefNumber' => 'Test'
+            "ShortCode"=> env('MPESA_SHORTCODE'),
+            "CommandID"=> "CustomerPayBillOnline",
+            "Amount"=> 1,
+            "Msisdn"=> "254708374149",
+            "BillRefNumber"=> "null"
         );
         $result = $this->makeHttp($url, $data);
         return $result;
