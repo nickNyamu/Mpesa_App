@@ -23,3 +23,4 @@ Route::post("sts/access/token", [MpesaController::class, "generateAccessToken"])
 Route::post("sts/payment/confirmation", [MpesaController::class, "mpesaConfirmation"]);
 Route::post("sts/validation", [MpesaController::class, "mpesaValidation"]);
 Route::post("sts/register/urls", [MpesaController::class, "mpesaRegisterUrls"]);
+Route::post("sts/simulate", [MpesaController::class, "simulateTransaction"]);

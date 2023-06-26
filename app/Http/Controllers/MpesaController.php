@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class MpesaController extends Controller
 {
@@ -36,8 +37,10 @@ class MpesaController extends Controller
         return $response;
     }
 
-    public function mpesaValidation()
+    public function mpesaValidation(Request $request)
     {
+        Log::info('Validation Endpoin Hit!');
+        Log::info($request->all());
         $resultCode = "0";
         $resultDesc = "Accepted validation request.";
         return $this->createValidationResponse($resultCode, $resultDesc);
@@ -64,6 +67,7 @@ class MpesaController extends Controller
     public function mpesaConfirmation(Request $request)
     {
         $content=json_decode($request->getContent());
+        Log::info($content);
         $mpesa_transaction = new Payment();
         $mpesa_transaction->TransactionType = $content->TransactionType;
         $mpesa_transaction->TransID = $content->TransID;
@@ -79,5 +83,31 @@ class MpesaController extends Controller
         $mpesa_transaction->MiddleName = $content->MiddleName;
         $mpesa_transaction->LastName = $content->LastName;
         $mpesa_transaction->save();
+    }
+
+    public function makeHttp($url, $data)
+    {
+        $curl=curl_init();
+        curl_setopt($curl,CURLOPT_URL,$url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json','Authorization:Bearer '.$this->generateAccessToken())); //setting custom header
+        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($curl,CURLOPT_POST,true);
+        curl_setopt($curl,CURLOPT_POSTFIELDS, json_encode($data));
+        $curl_response=curl_exec($curl);
+        return $curl_response;
+    }
+
+    public function simulateTransaction(Request $request)
+    {
+        $url = 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/simulate';
+        $data = array(
+            'ShortCode' => env('MPESA_SHORTCODE'),
+            'CommandID' => 'CustomerPayBillOnline',
+            'Amount' => 30,
+            'Msisdn' => env('MPESA_TEST_MSISDN'),
+            'BillRefNumber' => 'Test'
+        );
+        $result = $this->makeHttp($url, $data);
+        return $result;
     }
 }
